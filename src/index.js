@@ -1,11 +1,21 @@
 import React from 'react'
 import { render } from 'react-dom'
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
+import todo from './reducers'
+import App from './components/App'
 
-const rootElement = document.querySelector('#root')
+let store = createStore(todo)
+
+import { addTodo } from './actions'
+store.dispatch(addTodo('Hello React!'))
+store.dispatch(addTodo('Hello Redux!'))
+
+console.log(store.getState())
 
 render(
-  <div>
-    Hello World
-  </div>,
-  rootElement
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
 )

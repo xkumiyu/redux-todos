@@ -18,6 +18,7 @@
     "no-undef": 2,
     "no-console": 0,
     "no-unused-vars": 1,
-    "arrow-parens": [2, "always"]
+    "arrow-parens": [2, "always"],
+    "react/prop-types": [2, { ignore: ["dispatch"] }]
   }
 }
