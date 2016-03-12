@@ -7,9 +7,10 @@ import App from './components/App'
 
 let store = createStore(todo)
 
-import { addTodo } from './actions'
+import { addTodo, toggleTodo } from './actions'
 store.dispatch(addTodo('Hello React!'))
 store.dispatch(addTodo('Hello Redux!'))
+store.dispatch(toggleTodo(0))
 
 console.log(store.getState())
 
