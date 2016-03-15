@@ -60,11 +60,11 @@
 	
 	var _reducers2 = _interopRequireDefault(_reducers);
 	
-	var _App = __webpack_require__(179);
+	var _App = __webpack_require__(180);
 	
 	var _App2 = _interopRequireDefault(_App);
 	
-	var _actions = __webpack_require__(181);
+	var _actions = __webpack_require__(182);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -21020,9 +21020,17 @@
 	
 	var _todos2 = _interopRequireDefault(_todos);
 	
+	var _visibilityFilter = __webpack_require__(179);
+	
+	var _visibilityFilter2 = _interopRequireDefault(_visibilityFilter);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var todoApp = (0, _redux.combineReducers)({ todos: _todos2.default });
+	var todoApp = (0, _redux.combineReducers)({
+	  todos: _todos2.default,
+	  visibilityFilter: _visibilityFilter2.default
+	});
+	
 	exports.default = todoApp;
 
 /***/ },
@@ -21079,37 +21087,26 @@
 
 /***/ },
 /* 179 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	var visibilityFilter = function visibilityFilter() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? 'SHOW_ALL' : arguments[0];
+	  var action = arguments[1];
 	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _AddTodo = __webpack_require__(180);
-	
-	var _AddTodo2 = _interopRequireDefault(_AddTodo);
-	
-	var _VisibleTodoList = __webpack_require__(182);
-	
-	var _VisibleTodoList2 = _interopRequireDefault(_VisibleTodoList);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var App = function App() {
-	  return _react2.default.createElement(
-	    'div',
-	    null,
-	    _react2.default.createElement(_AddTodo2.default, null),
-	    _react2.default.createElement(_VisibleTodoList2.default, null)
-	  );
+	  switch (action.type) {
+	    case 'SET_VISIBILITY_FILTER':
+	      return action.filter;
+	    default:
+	      return state;
+	  }
 	};
-	exports.default = App;
+	
+	exports.default = visibilityFilter;
 
 /***/ },
 /* 180 */
@@ -21125,9 +21122,48 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _AddTodo = __webpack_require__(181);
+	
+	var _AddTodo2 = _interopRequireDefault(_AddTodo);
+	
+	var _VisibleTodoList = __webpack_require__(183);
+	
+	var _VisibleTodoList2 = _interopRequireDefault(_VisibleTodoList);
+	
+	var _Footer = __webpack_require__(186);
+	
+	var _Footer2 = _interopRequireDefault(_Footer);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var App = function App() {
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(_AddTodo2.default, null),
+	    _react2.default.createElement(_VisibleTodoList2.default, null),
+	    _react2.default.createElement(_Footer2.default, null)
+	  );
+	};
+	exports.default = App;
+
+/***/ },
+/* 181 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
 	var _reactRedux = __webpack_require__(159);
 	
-	var _actions = __webpack_require__(181);
+	var _actions = __webpack_require__(182);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -21157,7 +21193,7 @@
 	exports.default = AddTodo;
 
 /***/ },
-/* 181 */
+/* 182 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21174,6 +21210,13 @@
 	  };
 	};
 	
+	var setVisibilityFilter = exports.setVisibilityFilter = function setVisibilityFilter(filter) {
+	  return {
+	    type: 'SET_VISIBILITY_FILTER',
+	    filter: filter
+	  };
+	};
+	
 	var toggleTodo = exports.toggleTodo = function toggleTodo(id) {
 	  return {
 	    type: 'TOGGLE_TODO',
@@ -21182,7 +21225,7 @@
 	};
 
 /***/ },
-/* 182 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21193,16 +21236,33 @@
 	
 	var _reactRedux = __webpack_require__(159);
 	
-	var _actions = __webpack_require__(181);
+	var _actions = __webpack_require__(182);
 	
-	var _TodoList = __webpack_require__(183);
+	var _TodoList = __webpack_require__(184);
 	
 	var _TodoList2 = _interopRequireDefault(_TodoList);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	var getVisibleTodos = function getVisibleTodos(todos, filter) {
+	  switch (filter) {
+	    case 'SHOW_ALL':
+	      return todos;
+	    case 'SHOW_COMPLETED':
+	      return todos.filter(function (t) {
+	        return t.completed;
+	      });
+	    case 'SHOW_ACTIVE':
+	      return todos.filter(function (t) {
+	        return !t.completed;
+	      });
+	  }
+	};
+	
 	var mapStateToProps = function mapStateToProps(state) {
-	  return { todos: state.todos };
+	  return {
+	    todos: getVisibleTodos(state.todos, state.visibilityFilter)
+	  };
 	};
 	
 	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
@@ -21218,7 +21278,7 @@
 	exports.default = VisibleTodoList;
 
 /***/ },
-/* 183 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21233,7 +21293,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _Todo = __webpack_require__(184);
+	var _Todo = __webpack_require__(185);
 	
 	var _Todo2 = _interopRequireDefault(_Todo);
 	
@@ -21268,7 +21328,7 @@
 	exports.default = TodoList;
 
 /***/ },
-/* 184 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21304,6 +21364,141 @@
 	};
 	
 	exports.default = Todo;
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _FilterLink = __webpack_require__(187);
+	
+	var _FilterLink2 = _interopRequireDefault(_FilterLink);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Footer = function Footer() {
+	  return _react2.default.createElement(
+	    'p',
+	    null,
+	    'Show:',
+	    " ",
+	    _react2.default.createElement(
+	      _FilterLink2.default,
+	      { filter: 'SHOW_ALL' },
+	      'All'
+	    ),
+	    ", ",
+	    _react2.default.createElement(
+	      _FilterLink2.default,
+	      { filter: 'SHOW_ACTIVE' },
+	      'Active'
+	    ),
+	    ", ",
+	    _react2.default.createElement(
+	      _FilterLink2.default,
+	      { filter: 'SHOW_COMPLETED' },
+	      'Completed'
+	    )
+	  );
+	};
+	
+	exports.default = Footer;
+
+/***/ },
+/* 187 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _reactRedux = __webpack_require__(159);
+	
+	var _actions = __webpack_require__(182);
+	
+	var _Link = __webpack_require__(188);
+	
+	var _Link2 = _interopRequireDefault(_Link);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var mapStateToProps = function mapStateToProps(state, ownProps) {
+	  return {
+	    active: ownProps.filter === state.visibilityFilter
+	  };
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    onClick: function onClick() {
+	      dispatch((0, _actions.setVisibilityFilter)(ownProps.filter));
+	    }
+	  };
+	};
+	
+	var FilterLink = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_Link2.default);
+	
+	exports.default = FilterLink;
+
+/***/ },
+/* 188 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Link = function Link(_ref) {
+	  var active = _ref.active;
+	  var children = _ref.children;
+	  var _onClick = _ref.onClick;
+	
+	  if (active) {
+	    return _react2.default.createElement(
+	      "span",
+	      null,
+	      children
+	    );
+	  }
+	
+	  return _react2.default.createElement(
+	    "a",
+	    { href: "#",
+	      onClick: function onClick(e) {
+	        e.preventDefault();
+	        _onClick();
+	      }
+	    },
+	    children
+	  );
+	};
+	
+	Link.propTypes = {
+	  active: _react.PropTypes.bool.isRequired,
+	  children: _react.PropTypes.node.isRequired,
+	  onClick: _react.PropTypes.func.isRequired
+	};
+	
+	exports.default = Link;
 
 /***/ }
 /******/ ]);
